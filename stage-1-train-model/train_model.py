@@ -12,7 +12,8 @@ from datetime import date
 import boto3 as aws
 import numpy as np
 import pandas as pd
-from botocore.exceptions import ClientError, S3UploadFailedError
+from boto3.exceptions import S3UploadFailedError
+from botocore.exceptions import ClientError
 from joblib import dump
 from sklearn.base import BaseEstimator
 from sklearn.linear_model import LinearRegression
