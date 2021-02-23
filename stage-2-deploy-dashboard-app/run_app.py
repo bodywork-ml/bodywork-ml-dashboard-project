@@ -48,7 +48,7 @@ def main() -> None:
     navbar = make_navbar()
     metrics_table = make_metrics_table(model_metrics)
     plot = make_scatter_plot(dataset, 'y', 'y_pred')
-    info_alert = dbc.Alert(f'{type(model)} trained on {model_date}', color='info')
+    info_alert = make_alert(model, model_date)
 
     app.layout = dbc.Container(
         [
@@ -88,6 +88,11 @@ def make_navbar() -> dbc.Navbar:
     return navbar
 
 
+def make_alert(model: BaseEstimator, model_date: date) -> dbc.Alert:
+    text = f'Training metrics for model of class {type(model)} trained on {model_date}'
+    return dbc.Alert(text, color='info')
+
+
 def make_metrics_table(metrics: Dict[str, float]) -> dbc.Table:
     table_header = html.Thead(
         html.Tr([html.Th('Metric'), html.Th('Value')])
@@ -111,8 +116,10 @@ def make_scatter_plot(data: pd.DataFrame, x: str, y: str) -> dcc.Graph:
         marginal_x='histogram',
         marginal_y='histogram',
         trendline='lowess',
-        trendline_color_override='red'
+        trendline_color_override='red',
+        template='plotly_white'
     )
+    plot.update_traces(marker={'color': 'rgb(124, 70, 165)'})
     return dcc.Graph(id='dataset', figure=plot)
 
 
