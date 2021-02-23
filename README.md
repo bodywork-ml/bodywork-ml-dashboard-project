@@ -1,4 +1,4 @@
-# Deploy ML Pipelines on Kubernetes with Bodywork
+# Deploy ML Dashboards on Kubernetes with Bodywork
 
 ![bodywork](https://bodywork-media.s3.eu-west-2.amazonaws.com/ml_pipeline.png)
 
