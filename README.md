@@ -5,7 +5,7 @@
 This repository contains a Bodywork project that demonstrates how to run a ML workflow on Kubernetes (k8s), with Bodywork. The example ML workflow has two stages:
 
 1. Run a batch job to train a model that is stored in a AWS S3 bucket.
-2. Deploy a Plotly dashboard to presenting model performance information.
+2. Deploy a Plotly dashboard to present model performance information.
 
 To run this project, follow the steps below.
 
