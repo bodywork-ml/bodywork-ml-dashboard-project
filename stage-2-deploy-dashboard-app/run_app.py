@@ -71,7 +71,7 @@ def main() -> None:
         ]
     )
 
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 
 def make_navbar() -> dbc.Navbar:
