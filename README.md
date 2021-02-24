@@ -55,7 +55,7 @@ $ kubectl proxy
 Now open a browser and reach the dashboard at,
 
 ```
-http://localhost:8001/api/v1/namespaces/ml-workflow/services/bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/proxy/
+http://localhost:8001/api/v1/namespaces/ml-workflow/services/bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/proxy/dash/
 ```
 
 Where you should see something that looks like,

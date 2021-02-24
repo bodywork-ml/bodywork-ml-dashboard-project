@@ -30,10 +30,13 @@ def main() -> None:
     date_stamp = date.today()
     log.addHandler(logging.StreamHandler(sys.stdout))
     log.setLevel(logging.INFO)
+
     log.info(f'creating synthetic dataset for date = {date_stamp}')
     dataset = generate_dataset(N_SAMPLES)
+
     log.info(f'training model for date = {date_stamp}')
     model = train_model(dataset)
+
     log.info(f'persisting dataset and model for date = {date_stamp}')
     persist_model(model, AWS_S3_BUCKET)
     persist_dataset(dataset, AWS_S3_BUCKET)

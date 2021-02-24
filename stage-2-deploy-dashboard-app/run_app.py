@@ -4,7 +4,7 @@ This module defines what will happen in 'stage-2-deploy-dashboard-app':
 - load dataset and ML model from AWS S3;
 - batch-score the dataset using the model;,
 - compute model performance metrics and 'predicted vs. actual' plot; and,
-- serve simple dashboard to present results to a user.
+- serve simple Plotly dashboard to visualise results for users.
 """
 import logging
 import os
@@ -88,6 +88,7 @@ def main() -> None:
 
 
 def make_navbar() -> dbc.Navbar:
+    """Generate the dashboard's navbar component."""
     logo = ('https://bodywork-media.s3.eu-west-2.amazonaws.com/'
             'website_logo_transparent_background.png')
 
@@ -104,11 +105,13 @@ def make_navbar() -> dbc.Navbar:
 
 
 def make_alert(model: BaseEstimator, model_date: date) -> dbc.Alert:
+    """Generate the dashboard's alert component."""
     text = f'Training metrics for model of class {type(model)} trained on {model_date}'
     return dbc.Alert(text, color='info')
 
 
 def make_metrics_table(metrics: Dict[str, float]) -> dbc.Table:
+    """Generate the dashboard's metrics table component."""
     table_header = html.Thead(
         html.Tr([html.Th('Metric'), html.Th('Value')])
     )
@@ -120,6 +123,7 @@ def make_metrics_table(metrics: Dict[str, float]) -> dbc.Table:
 
 
 def make_scatter_plot(data: pd.DataFrame, x: str, y: str) -> dcc.Graph:
+    """Generate the dashboard's plot component."""
     max_value = np.max([np.max(data[x].values), np.max(data[y].values)])
     plot = px.scatter(
         data,
