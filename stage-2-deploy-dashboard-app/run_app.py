@@ -47,9 +47,7 @@ def main() -> None:
 
     app = dash.Dash(
         name=__name__,
-        external_stylesheets=[dbc.themes.COSMO],
-        routes_pathname_prefix='',
-        requests_pathname_prefix=''
+        external_stylesheets=[dbc.themes.COSMO]
     )
 
     navbar = make_navbar()
