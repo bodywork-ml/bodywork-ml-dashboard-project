@@ -19,7 +19,6 @@ import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 import plotly.express as px
-from flask import Flask
 from joblib import load
 from sklearn.base import BaseEstimator
 from sklearn.metrics import mean_absolute_percentage_error, max_error, r2_score
@@ -49,7 +48,6 @@ def main() -> None:
     app = dash.Dash(
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
-        server=Flask(__name__),
         routes_pathname_prefix='/dash/'
     )
 
