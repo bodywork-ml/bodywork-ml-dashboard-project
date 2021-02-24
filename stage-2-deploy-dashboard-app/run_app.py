@@ -46,7 +46,6 @@ def main() -> None:
     model_metrics = compute_model_metrics(dataset['y'], dataset['y_pred'])
 
     app = dash.Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
-    app.config.requests_pathname_prefix = ''
 
     navbar = make_navbar()
     metrics_table = make_metrics_table(model_metrics)
@@ -72,7 +71,7 @@ def main() -> None:
         ]
     )
 
-    app.run_server(host='0.0.0.0', debug=False)
+    app.run_server(host='0.0.0.0', debug=True)
 
 
 def make_navbar() -> dbc.Navbar:
