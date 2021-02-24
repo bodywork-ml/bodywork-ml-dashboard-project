@@ -45,7 +45,12 @@ def main() -> None:
     dataset['y_pred'] = model.predict(dataset['X'].values.reshape(-1, 1))
     model_metrics = compute_model_metrics(dataset['y'], dataset['y_pred'])
 
-    app = dash.Dash(__name__, external_stylesheets=[dbc.themes.COSMO])
+    app = dash.Dash(
+        name=__name__,
+        external_stylesheets=[dbc.themes.COSMO],
+        routes_pathname_prefix='',
+        requests_pathname_prefix=''
+    )
 
     navbar = make_navbar()
     metrics_table = make_metrics_table(model_metrics)
