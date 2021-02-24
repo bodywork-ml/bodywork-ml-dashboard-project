@@ -48,7 +48,8 @@ def main() -> None:
     app = dash.Dash(
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
-        url_base_pathname='/dash/'
+        url_base_pathname='/dash/',
+        serve_locally=False  # to play nice with kubectl proxy
     )
 
     navbar = make_navbar()
