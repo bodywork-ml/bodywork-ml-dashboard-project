@@ -30,6 +30,10 @@ MODEL_URL = ('http://bodywork-ml-dashboard-project.s3.eu-west-2.amazonaws.com/'
 DATASET_URL = ('http://bodywork-ml-dashboard-project.s3.eu-west-2.amazonaws.com/'
                'datasets/regression-dataset.csv')
 
+KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
+                        'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
+                        'proxy/')
+
 log = logging.getLogger(__name__)
 
 
@@ -48,8 +52,10 @@ def main() -> None:
     app = dash.Dash(
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
+        serve_locally=True,
         url_base_pathname='/dash/',
-        serve_locally=True
+        routes_pathname_prefix='/',
+        requests_pathname_prefix=KUBECTL_PROXY_PREFIX
     )
 
     navbar = make_navbar()
