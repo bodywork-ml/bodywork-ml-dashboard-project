@@ -7,6 +7,7 @@ This module defines what will happen in 'stage-2-deploy-dashboard-app':
 - serve simple dashboard to present results to a user.
 """
 import logging
+import os
 import sys
 from datetime import date
 from typing import Dict
@@ -32,7 +33,7 @@ DATASET_URL = ('http://bodywork-ml-dashboard-project.s3.eu-west-2.amazonaws.com/
 
 KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
                         'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
-                        'proxy/')
+                        'proxy/dash/')
 
 log = logging.getLogger(__name__)
 
@@ -42,21 +43,22 @@ def main() -> None:
     log.addHandler(logging.StreamHandler(sys.stdout))
     log.setLevel(logging.INFO)
 
+    is_deployed_to_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
+
+    app = dash.Dash(
+        name=__name__,
+        external_stylesheets=[dbc.themes.COSMO],
+        serve_locally=True,
+        routes_pathname_prefix='/dash/',
+        requests_pathname_prefix=KUBECTL_PROXY_PREFIX if is_deployed_to_k8s else '/dash/'
+    )
+
     date_stamp = date.today()
     dataset = get_dataset(DATASET_URL)
     model = get_model(MODEL_URL)
 
     dataset['y_pred'] = model.predict(dataset['X'].values.reshape(-1, 1))
     model_metrics = compute_model_metrics(dataset['y'], dataset['y_pred'])
-
-    app = dash.Dash(
-        name=__name__,
-        external_stylesheets=[dbc.themes.COSMO],
-        serve_locally=True,
-        url_base_pathname='/dash/',
-        routes_pathname_prefix='/',
-        requests_pathname_prefix=KUBECTL_PROXY_PREFIX
-    )
 
     navbar = make_navbar()
     metrics_table = make_metrics_table(model_metrics)
