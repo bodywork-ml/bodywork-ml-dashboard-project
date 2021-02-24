@@ -35,8 +35,8 @@ def main() -> None:
     log.info(f'training model for date = {date_stamp}')
     model = train_model(dataset)
     log.info(f'persisting dataset and model for date = {date_stamp}')
-    persist_model(model, date_stamp, AWS_S3_BUCKET)
-    persist_dataset(dataset, date_stamp, AWS_S3_BUCKET)
+    persist_model(model, AWS_S3_BUCKET)
+    persist_dataset(dataset, AWS_S3_BUCKET)
 
 
 def generate_dataset(n: int) -> pd.DataFrame:
@@ -70,9 +70,9 @@ def train_model(data: pd.DataFrame) -> BaseEstimator:
     return ols_regressor
 
 
-def persist_dataset(dataset: pd.DataFrame, data_date: date, aws_bucket: str) -> None:
+def persist_dataset(dataset: pd.DataFrame, aws_bucket: str) -> None:
     """Upload dataset metrics to AWS S3."""
-    dataset_filename = f'regression-dataset-{data_date}.csv'
+    dataset_filename = 'regression-dataset.csv'
     dataset.to_csv(dataset_filename, header=True, index=False)
     try:
         s3_client = aws.client('s3')
@@ -86,9 +86,9 @@ def persist_dataset(dataset: pd.DataFrame, data_date: date, aws_bucket: str) -> 
         log.error('could not upload dataset to S3 - check AWS credentials')
 
 
-def persist_model(model: BaseEstimator, data_date: date, aws_bucket: str) -> None:
+def persist_model(model: BaseEstimator, aws_bucket: str) -> None:
     """Upload trained model to AWS S3."""
-    model_filename = f'regressor-{data_date}.joblib'
+    model_filename = 'regressor.joblib'
     dump(model, model_filename)
     try:
         s3_client = aws.client('s3')
