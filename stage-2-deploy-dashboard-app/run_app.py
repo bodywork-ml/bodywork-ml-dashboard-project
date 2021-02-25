@@ -35,14 +35,9 @@ KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
                         'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
                         'proxy/dash/')
 
-log = logging.getLogger(__name__)
-
 
 def main() -> None:
     """Main script to be executed."""
-    log.addHandler(logging.StreamHandler(sys.stdout))
-    log.setLevel(logging.INFO)
-
     is_deployed_to_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
 
     app = dash.Dash(
@@ -54,7 +49,9 @@ def main() -> None:
     )
 
     date_stamp = date.today()
+    log.info(f'downloading data from {DATASET_URL}')
     dataset = get_dataset(DATASET_URL)
+    log.info(f'downloading model from {MODEL_URL}')
     model = get_model(MODEL_URL)
 
     dataset['y_pred'] = model.predict(dataset['X'].values.reshape(-1, 1))
@@ -84,6 +81,7 @@ def main() -> None:
         ]
     )
 
+    log.info('starting dashboard')
     app.run_server(host='0.0.0.0', debug=False)
 
 
@@ -138,7 +136,7 @@ def make_scatter_plot(data: pd.DataFrame, x: str, y: str) -> dcc.Graph:
         trendline_color_override='red',
         template='plotly_white'
     )
-    plot.update_traces(marker={'color': 'rgb(124, 70, 165)'})
+    plot.update_traces(marker={'color': 'rgb(0, 145, 115)'})
     return dcc.Graph(id='dataset', figure=plot)
 
 
@@ -171,5 +169,22 @@ def get_model(url: str) -> BaseEstimator:
     return load(model_file)
 
 
+def configure_logger() -> logging.Logger:
+    """Configure a logger that will write to stdout."""
+    log_handler = logging.StreamHandler(sys.stdout)
+    log_format = logging.Formatter(
+        '%(asctime)s - '
+        '%(levelname)s - '
+        '%(module)s.%(funcName)s - '
+        '%(message)s'
+    )
+    log_handler.setFormatter(log_format)
+    log = logging.getLogger(__name__)
+    log.addHandler(log_handler)
+    log.setLevel(logging.INFO)
+    return log
+
+
 if __name__ == '__main__':
+    log = configure_logger()
     main()
