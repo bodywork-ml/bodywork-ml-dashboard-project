@@ -14,6 +14,7 @@ from typing import Dict
 from urllib.request import urlopen
 
 import dash
+import dash_auth
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
@@ -35,6 +36,10 @@ KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
                         'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
                         'proxy/dash/')
 
+DASH_CREDENTIALS = {
+    os.environ['DASH_USERNAME']: os.environ['DASH_PASSWORD']
+}
+
 
 def main() -> None:
     """Main script to be executed."""
@@ -47,6 +52,7 @@ def main() -> None:
         routes_pathname_prefix='/dash/',
         requests_pathname_prefix=KUBECTL_PROXY_PREFIX if is_deployed_to_k8s else '/dash/'
     )
+    dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
     date_stamp = date.today()
     dataset = get_dataset(DATASET_URL)
@@ -133,7 +139,7 @@ def make_scatter_plot(data: pd.DataFrame, x: str, y: str) -> dcc.Graph:
         trendline_color_override='red',
         template='plotly_white'
     )
-    plot.update_traces(marker={'color': 'rgb(124, 70, 165)'})
+    plot.update_traces(marker={'color': 'rgb(0, 145, 115)'})
     return dcc.Graph(id='dataset', figure=plot)
 
 
