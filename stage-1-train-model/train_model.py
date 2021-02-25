@@ -22,14 +22,10 @@ from sklearn.model_selection import train_test_split
 AWS_S3_BUCKET = 'bodywork-ml-dashboard-project'
 N_SAMPLES = 24 * 60
 
-log = logging.getLogger(__name__)
-
 
 def main() -> None:
     """Main script to be executed."""
     date_stamp = date.today()
-    log.addHandler(logging.StreamHandler(sys.stdout))
-    log.setLevel(logging.INFO)
 
     log.info(f'creating synthetic dataset for date = {date_stamp}')
     dataset = generate_dataset(N_SAMPLES)
@@ -105,5 +101,22 @@ def persist_model(model: BaseEstimator, aws_bucket: str) -> None:
         log.error('could not upload model to S3 - check AWS credentials')
 
 
+def configure_logger() -> logging.Logger:
+    """Configure a logger that will write to stdout."""
+    log_handler = logging.StreamHandler(sys.stdout)
+    log_format = logging.Formatter(
+        '%(asctime)s - '
+        '%(levelname)s - '
+        '%(module)s.%(funcName)s - '
+        '%(message)s'
+    )
+    log_handler.setFormatter(log_format)
+    log = logging.getLogger(__name__)
+    log.addHandler(log_handler)
+    log.setLevel(logging.INFO)
+    return log
+
+
 if __name__ == '__main__':
+    log = configure_logger()
     main()

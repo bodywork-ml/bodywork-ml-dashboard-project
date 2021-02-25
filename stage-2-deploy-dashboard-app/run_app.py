@@ -35,14 +35,9 @@ KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
                         'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
                         'proxy/dash/')
 
-log = logging.getLogger(__name__)
-
 
 def main() -> None:
     """Main script to be executed."""
-    log.addHandler(logging.StreamHandler(sys.stdout))
-    log.setLevel(logging.INFO)
-
     is_deployed_to_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
 
     app = dash.Dash(
@@ -171,5 +166,22 @@ def get_model(url: str) -> BaseEstimator:
     return load(model_file)
 
 
+def configure_logger() -> logging.Logger:
+    """Configure a logger that will write to stdout."""
+    log_handler = logging.StreamHandler(sys.stdout)
+    log_format = logging.Formatter(
+        '%(asctime)s - '
+        '%(levelname)s - '
+        '%(module)s.%(funcName)s - '
+        '%(message)s'
+    )
+    log_handler.setFormatter(log_format)
+    log = logging.getLogger(__name__)
+    log.addHandler(log_handler)
+    log.setLevel(logging.INFO)
+    return log
+
+
 if __name__ == '__main__':
+    log = configure_logger()
     main()
