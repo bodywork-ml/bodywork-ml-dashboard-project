@@ -55,7 +55,9 @@ def main() -> None:
     dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
     date_stamp = date.today()
+    log.info(f'downloading data from {DATASET_URL}')
     dataset = get_dataset(DATASET_URL)
+    log.info(f'downloading model from {MODEL_URL}')
     model = get_model(MODEL_URL)
 
     dataset['y_pred'] = model.predict(dataset['X'].values.reshape(-1, 1))
@@ -85,6 +87,7 @@ def main() -> None:
         ]
     )
 
+    log.info('starting dashboard')
     app.run_server(host='0.0.0.0', debug=False)
 
 
