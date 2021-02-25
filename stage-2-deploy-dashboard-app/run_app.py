@@ -50,8 +50,7 @@ def main() -> None:
         external_stylesheets=[dbc.themes.COSMO],
         serve_locally=True,
         routes_pathname_prefix='/dash/',
-        requests_pathname_prefix='/dash/'
-        # requests_pathname_prefix=KUBECTL_PROXY_PREFIX if is_deployed_to_k8s else '/dash/'
+        requests_pathname_prefix=KUBECTL_PROXY_PREFIX if is_deployed_to_k8s else '/dash/'
     )
     dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
