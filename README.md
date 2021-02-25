@@ -31,6 +31,17 @@ $ pip install bodywork
 $ bodywork setup-namespace ml-workflow
 ```
 
+## Inject Dashboard Credentials into Namespace
+
+The dashboard uses basic authentication, which requires a username and password to be passed to it via environment variables. These can be securely injected into the containers running the app, using Bodywork's secret management capabilities,
+
+```shell
+bodywork secret create \
+    --namespace=ml-workflow \
+    --name=plotly-dash-credentials \
+    --data DASH_USERNAME=bodywork DASH_PASSWORD=bodywork123
+```
+
 ## Run the Workflow
 
 To test the ML workflow, using a workflow-controller running on your local machine and interacting with your k8s cluster, run,
