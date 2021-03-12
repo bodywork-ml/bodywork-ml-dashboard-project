@@ -47,7 +47,8 @@ def main() -> None:
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
         serve_locally=True,
-        url_base_pathname=K8S_INGRESS_PATH if is_deployed_to_k8s else '/'
+        routes_pathname_prefix=K8S_INGRESS_PATH if is_deployed_to_k8s else '/',
+        requests_pathname_prefix='/'
     )
     dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
