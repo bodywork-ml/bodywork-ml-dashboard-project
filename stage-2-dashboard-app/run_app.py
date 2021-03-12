@@ -36,7 +36,7 @@ DASH_CREDENTIALS = {
     os.environ['DASH_USERNAME']: os.environ['DASH_PASSWORD']
 }
 
-K8S_INGRESS_ROUTE = '/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app/'
+K8S_INGRESS_PATH = '/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app/'
 
 
 def main() -> None:
@@ -47,8 +47,7 @@ def main() -> None:
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
         serve_locally=True,
-        routes_pathname_prefix=K8S_INGRESS_ROUTE if is_deployed_to_k8s else '/',
-        requests_pathname_prefix='/'
+        url_base_pathname=K8S_INGRESS_PATH if is_deployed_to_k8s else '/'
     )
     dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
