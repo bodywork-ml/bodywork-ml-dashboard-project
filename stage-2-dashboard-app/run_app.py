@@ -41,14 +41,14 @@ K8S_INGRESS_PATH = '/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboar
 
 def main() -> None:
     """Main script to be executed."""
-    is_deployed_to_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
+    on_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
 
     app = dash.Dash(
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
         serve_locally=True,
-        routes_pathname_prefix=K8S_INGRESS_PATH if is_deployed_to_k8s else '/',
-        requests_pathname_prefix='/'
+        routes_pathname_prefix=f'{K8S_INGRESS_PATH}/dash/' if on_k8s else '/dash/',
+        requests_pathname_prefix='/dash/'
     )
     dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
