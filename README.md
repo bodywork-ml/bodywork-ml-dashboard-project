@@ -2,7 +2,7 @@
 
 ![bodywork](https://bodywork-media.s3.eu-west-2.amazonaws.com/ml_dashboard_workflow.png)
 
-This repository contains a Bodywork project that demonstrates how to run a ML workflow on Kubernetes (k8s), with Bodywork. The example ML workflow has two stages:
+This repository contains a Bodywork project that demonstrates how to run a ML workflow on Kubernetes, with Bodywork. The example ML workflow has two stages:
 
 1. Run a batch job to train a model that is stored in a AWS S3 bucket.
 2. Deploy a Plotly dashboard to present model performance information.
@@ -11,7 +11,7 @@ To run this project, follow the steps below.
 
 ## Get Access to a Kubernetes Cluster
 
-In order to run this example project you will need access to a k8s cluster. To setup a single-node test cluster on your local machine you can use [minikube](https://minikube.sigs.k8s.io/docs/) or [docker-for-desktop](https://www.docker.com/products/docker-desktop). Check your access to k8s by running,
+In order to run this example project you will need access to a Kubernetes cluster. To setup a single-node test cluster on your local machine you can use [minikube](https://minikube.sigs.Kubernetes.io/docs/) or [docker-for-desktop](https://www.docker.com/products/docker-desktop). Check your access to Kubernetes by running,
 
 ```shell
 $ kubectl cluster-info
@@ -31,9 +31,20 @@ $ pip install bodywork
 $ bodywork setup-namespace ml-workflow
 ```
 
+## Inject Dashboard Credentials into Namespace
+
+The dashboard uses basic authentication, which requires a username and password to be passed to it via environment variables. These can be securely injected into the containers running the app, using Bodywork's secret management capabilities,
+
+```shell
+bodywork secret create \
+    --namespace=ml-workflow \
+    --name=plotly-dash-credentials \
+    --data DASH_USERNAME=bodywork DASH_PASSWORD=bodywork123
+```
+
 ## Run the Workflow
 
-To test the ML workflow, using a workflow-controller running on your local machine and interacting with your k8s cluster, run,
+To test the ML workflow, using a workflow-controller running on your local machine and interacting with your Kubernetes cluster, run,
 
 ```shell
 $ bodywork workflow \
@@ -46,19 +57,13 @@ The workflow-controller logs will be streamed to your shell's standard output un
 
 ## Accessing the Dashboard
 
-Service deployments are accessible via HTTP from within the cluster - they are not exposed to the public internet. To test a service from your local machine you will first of all need to start a proxy server to enable access to your cluster. This can be achieved by issuing the following command,
+You can only reach the dashboard from outside the cluster, if you have [installed an ingress controller](https://bodywork.readthedocs.io/en/latest/kubernetes/#configuring-ingress) in your cluster (this is not as complex as it sounds). If an ingress controller is operational, then you can reach the dashboard with a browser at,
 
-```shell
-$ kubectl proxy
+```http
+http://YOUR_CLUSTERS_EXTERNAL_IP/ml-workflow/bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/dash/
 ```
 
-Now open a browser and reach the dashboard at,
-
-```
-http://localhost:8001/api/v1/namespaces/ml-workflow/services/bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/proxy/dash/
-```
-
-Where you should see something that looks like,
+See [here](https://bodywork.readthedocs.io/en/latest/kubernetes/#connecting-to-the-cluster) for instruction on how to retrieve `YOUR_CLUSTERS_EXTERNAL_IP`. You should see something that looks like,
 
 ![bodywork](https://bodywork-media.s3.eu-west-2.amazonaws.com/ml_dashboard_screenshot.png)
 

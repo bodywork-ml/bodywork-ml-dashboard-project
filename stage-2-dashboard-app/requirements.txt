@@ -1,4 +1,5 @@
 dash==1.19.0
+dash-auth==1.4.1
 dash-bootstrap-components==0.11.3
 joblib==0.17.0
 numpy==1.19.5

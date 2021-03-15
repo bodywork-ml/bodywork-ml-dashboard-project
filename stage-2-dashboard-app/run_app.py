@@ -14,6 +14,7 @@ from typing import Dict
 from urllib.request import urlopen
 
 import dash
+import dash_auth
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
@@ -31,22 +32,25 @@ MODEL_URL = ('http://bodywork-ml-dashboard-project.s3.eu-west-2.amazonaws.com/'
 DATASET_URL = ('http://bodywork-ml-dashboard-project.s3.eu-west-2.amazonaws.com/'
                'datasets/regression-dataset.csv')
 
-KUBECTL_PROXY_PREFIX = ('/api/v1/namespaces/ml-workflow/services/'
-                        'bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/'
-                        'proxy/dash/')
+DASH_CREDENTIALS = {
+    os.environ['DASH_USERNAME']: os.environ['DASH_PASSWORD']
+}
+
+K8S_INGRESS_PATH = '/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app'
 
 
 def main() -> None:
     """Main script to be executed."""
-    is_deployed_to_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
+    on_k8s = True if os.environ.get('KUBERNETES_SERVICE_HOST') else False
 
     app = dash.Dash(
         name=__name__,
         external_stylesheets=[dbc.themes.COSMO],
         serve_locally=True,
         routes_pathname_prefix='/dash/',
-        requests_pathname_prefix=KUBECTL_PROXY_PREFIX if is_deployed_to_k8s else '/dash/'
+        requests_pathname_prefix=f'{K8S_INGRESS_PATH}/dash/' if on_k8s else '/dash/'
     )
+    dash_auth.BasicAuth(app, DASH_CREDENTIALS)
 
     date_stamp = date.today()
     log.info(f'downloading data from {DATASET_URL}')
