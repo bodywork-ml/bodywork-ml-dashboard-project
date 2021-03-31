@@ -60,7 +60,7 @@ The workflow-controller logs will be streamed to your shell's standard output un
 You can only reach the dashboard from outside the cluster, if you have [installed an ingress controller](https://bodywork.readthedocs.io/en/latest/kubernetes/#configuring-ingress) in your cluster (this is not as complex as it sounds). If an ingress controller is operational, then you can reach the dashboard with a browser at,
 
 ```http
-http://YOUR_CLUSTERS_EXTERNAL_IP/ml-workflow/bodywork-ml-dashboard-project--stage-2-deploy-dashboard-app/dash/
+http://YOUR_CLUSTERS_EXTERNAL_IP/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app/dash/
 ```
 
 See [here](https://bodywork.readthedocs.io/en/latest/kubernetes/#connecting-to-the-cluster) for instruction on how to retrieve `YOUR_CLUSTERS_EXTERNAL_IP`. You should see something that looks like,
