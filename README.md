@@ -47,10 +47,12 @@ bodywork secret create \
 To test the ML workflow, using a workflow-controller running on your local machine and interacting with your Kubernetes cluster, run,
 
 ```shell
-$ bodywork workflow \
-    --namespace=ml-workflow \
-    https://github.com/bodywork-ml/bodywork-ml-dashboard-project \
-    master
+$ bodywork deployment create \
+    --namespace=scoring-service \
+    --name=test-deployment \
+    --git-repo-url=https://github.com/bodywork-ml/bodywork-ml-dashboard-project \
+    --git-repo-branch=master \
+    --local-workflow-controller
 ```
 
 The workflow-controller logs will be streamed to your shell's standard output until the job has been successfully completed.
