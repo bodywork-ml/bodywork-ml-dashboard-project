@@ -36,7 +36,7 @@ DASH_CREDENTIALS = {
     os.environ['DASH_USERNAME']: os.environ['DASH_PASSWORD']
 }
 
-K8S_INGRESS_PATH = '/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app'
+K8S_INGRESS_PATH = '/bodywork-ml-dashboard-project/stage-2-dashboard-app'
 
 
 def main() -> None:
