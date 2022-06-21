@@ -15,8 +15,8 @@ stages:
     cpu_request: 0.5
     memory_request_mb: 250
     batch:
-      max_completion_time_seconds: 180
-      retries: 2
+      max_completion_time_seconds: 120
+      retries: 1
   stage_2_dashboard_app:
     executable_module_path: run_app.py
     requirements:
@@ -34,7 +34,7 @@ stages:
     cpu_request: 0.5
     memory_request_mb: 250
     service:
-      max_startup_time_seconds: 180
+      max_startup_time_seconds: 120
       replicas: 2
       port: 8050
       ingress: true
