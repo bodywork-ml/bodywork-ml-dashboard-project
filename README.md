@@ -11,13 +11,7 @@ To run this project, follow the steps below.
 
 ## Get Access to a Kubernetes Cluster
 
-In order to run this example project you will need access to a Kubernetes cluster. To setup a single-node test cluster on your local machine you can use [minikube](https://minikube.sigs.Kubernetes.io/docs/) or [docker-for-desktop](https://www.docker.com/products/docker-desktop). Check your access to Kubernetes by running,
-
-```shell
-$ kubectl cluster-info
-```
-
-Which should return the details of your cluster.
+Use our [Quickstart Guide to Kubernetes for MLOps](https://bodywork.readthedocs.io/en/latest/kubernetes/#quickstart) to spin-up a local Minikube cluster in minutes.
 
 ## Install the Bodywork Python Package
 
@@ -25,47 +19,46 @@ Which should return the details of your cluster.
 $ pip install bodywork
 ```
 
-## Setup a Kubernetes Namespace for use with Bodywork
-
-```shell
-$ bodywork setup-namespace ml-workflow
-```
-
-## Inject Dashboard Credentials into Namespace
+## Load Dashboard Credentials into Cluster
 
 The dashboard uses basic authentication, which requires a username and password to be passed to it via environment variables. These can be securely injected into the containers running the app, using Bodywork's secret management capabilities,
 
 ```shell
-bodywork secret create \
-    --namespace=ml-workflow \
-    --name=plotly-dash-credentials \
-    --data DASH_USERNAME=bodywork DASH_PASSWORD=bodywork123
+$ bodywork create secret plotly-dash-credentials \
+    --group dev \
+    --data DASH_USERNAME=bodywork \
+    --data DASH_PASSWORD=bodywork123
 ```
 
-## Run the Workflow
-
-To test the ML workflow, using a workflow-controller running on your local machine and interacting with your Kubernetes cluster, run,
+## Run the ML Pipeline
 
 ```shell
-$ bodywork deployment create \
-    --namespace=scoring-service \
-    --name=test-deployment \
-    --git-repo-url=https://github.com/bodywork-ml/bodywork-ml-dashboard-project \
-    --git-repo-branch=master \
-    --local-workflow-controller
+$ bodywork create deployment https://github.com/bodywork-ml/bodywork-ml-dashboard-project.git
 ```
 
-The workflow-controller logs will be streamed to your shell's standard output until the job has been successfully completed.
+The orchestrator logs will be streamed to your terminal until the job has been successfully completed.
 
 ## Accessing the Dashboard
 
-You can only reach the dashboard from outside the cluster, if you have [installed an ingress controller](https://bodywork.readthedocs.io/en/latest/kubernetes/#configuring-ingress) in your cluster (this is not as complex as it sounds). If an ingress controller is operational, then you can reach the dashboard with a browser at,
+Once the deployment has completed, the dashboard server be ready for testing. Bodywork will create ingress routes to your endpoints using the following scheme:
 
-```http
-http://YOUR_CLUSTERS_EXTERNAL_IP/ml-workflow/bodywork-ml-dashboard-project--stage-2-dashboard-app/dash/
+```md
+/PIPELINE_NAME/STAGE_NAME/
 ```
 
-See [here](https://bodywork.readthedocs.io/en/latest/kubernetes/#connecting-to-the-cluster) for instruction on how to retrieve `YOUR_CLUSTERS_EXTERNAL_IP`. You should see something that looks like,
+To open an access route to the cluster for testing, start a new terminal and run,
+
+```text
+$ kubectl -n ingress-nginx port-forward service/ingress-nginx-controller 8080:80
+```
+
+Then browse the dashboard at,
+
+```http
+http://localhost:8080/bodywork-ml-dashboard-project/stage-2-dashboard-app/dash/
+```
+
+You should see something that looks like,
 
 ![bodywork](https://bodywork-media.s3.eu-west-2.amazonaws.com/ml_dashboard_screenshot.png)
 
@@ -74,12 +67,9 @@ See [here](https://bodywork.readthedocs.io/en/latest/kubernetes/#connecting-to-t
 If you're happy with the test results, you can schedule the workflow-controller to operate remotely on the cluster on a pre-defined schedule. For example, to setup the the workflow to run every hour, use the following command,
 
 ```shell
-$ bodywork cronjob create \
-    --namespace=ml-workflow \
+$ bodywork create cronjob https://github.com/bodywork-ml/bodywork-ml-dashboard-project \
     --name=train-with-metrics-dashboard \
     --schedule="0 * * * *" \
-    --git-repo-url=https://github.com/bodywork-ml/bodywork-ml-dashboard-project \
-    --git-repo-branch=master
 ```
 
 Each scheduled workflow will attempt to re-run the batch-job, as defined by the state of this repository's `master` branch at the time of execution.
@@ -87,32 +77,15 @@ Each scheduled workflow will attempt to re-run the batch-job, as defined by the 
 To get the execution history for all `train-with-metrics-dashboard` jobs use,
 
 ```shell
-$ bodywork cronjob history \
-    --namespace=ml-workflow \
-    --name=train-with-metrics-dashboard
-```
-
-Which should return output along the lines of,
-
-```text
-JOB_NAME                                START_TIME                    COMPLETION_TIME               ACTIVE      SUCCEEDED       FAILED
-train-with-metrics-dashboard-1605214260 2020-11-12 20:51:04+00:00     2020-11-12 20:52:34+00:00     0           1               0
-```
-
-Then to stream the logs from any given cronjob run (e.g. to debug and/or monitor for errors), use,
-
-```shell
-$ bodywork cronjob logs \
-    --namespace=ml-workflow \
-    --name=train-with-metrics-dashboard-1605214260
+$ bodywork get cronjob train-with-metrics-dashboard --history
 ```
 
 ## Cleaning Up
 
-To clean-up the deployment in its entirety, delete the namespace using kubectl - e.g. by running,
+To delete the deployment in its entirety,
 
 ```shell
-$ kubectl delete ns ml-workflow
+$ bodywork delete deployment train-with-metrics-dashboard
 ```
 
 ## Make this Project Your Own
