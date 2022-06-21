@@ -32,9 +32,9 @@ stages:
       DASH_USERNAME: plotly-dash-credentials
       DASH_PASSWORD: plotly-dash-credentials
     cpu_request: 0.5
-    memory_request_mb: 250
+    memory_request_mb: 500
     service:
-      max_startup_time_seconds: 120
+      max_startup_time_seconds: 180
       replicas: 2
       port: 8050
       ingress: true
